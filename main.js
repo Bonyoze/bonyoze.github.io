@@ -35,6 +35,7 @@ const init = async () => {
     
     // setup physics
     scene.enablePhysics(new BABYLON.Vector3(0, -20, 0), new BABYLON.CannonJSPlugin());
+    scene.physicsEnabled = false; // init value
 
     // create skybox
     var skybox = BABYLON.MeshBuilder.CreateBox("skybox", { size: 10000 }, scene);
