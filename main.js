@@ -1,7 +1,7 @@
 var cameraFOV = 1.5,
 mouseSensitivity = 1000,
-movementForce = 1.5,
-jumpForce = 0.75;
+movementForce = 0.2,
+jumpForce = 0.1;
 
 const init = async () => {
     const canvas = document.getElementById("canvas"),
@@ -34,7 +34,7 @@ const init = async () => {
     shadowGenerator.useKernelBlur = true;
     
     // setup physics
-    scene.enablePhysics(new BABYLON.Vector3(0, -20, 0), new BABYLON.CannonJSPlugin());
+    scene.enablePhysics(new BABYLON.Vector3(0, -32, 0), new BABYLON.CannonJSPlugin());
     scene.physicsEnabled = false; // init value
 
     // create skybox
@@ -68,15 +68,15 @@ const init = async () => {
     platform.position.y -= 9.5;
 
     // create player
-    var player = BABYLON.MeshBuilder.CreateCylinder("player", { height: 2, diameter: 1.15, tesselation: 48 });
-    player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 15, friction: 0, restitution: 0 }, scene);
+    var player = BABYLON.MeshBuilder.CreateCylinder("player", { height: 5, diameter: 2.5, tesselation: 48 });
+    player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 50, friction: 0, restitution: 0 }, scene);
     player.isPickable = false;
     player.position = new BABYLON.Vector3(0, 1, 0);
 
     skybox.parent = player;
     skybox.position = player.position
     camera.parent = player;
-    camera.position = new BABYLON.Vector3(0, 0.75, 0);
+    camera.position = new BABYLON.Vector3(0, 2, 0);
 
     // test physics objects
     for (let i = 0; i < 20; i++) {
@@ -163,7 +163,7 @@ const init = async () => {
 
     // handle player physics/movement
     const applyPlayerVel = vel => {
-        player.physicsImpostor.setLinearVelocity(player.physicsImpostor.getLinearVelocity().add(vel));
+        player.physicsImpostor.setLinearVelocity(player.physicsImpostor.getLinearVelocity().add(vel.multiply(new BABYLON.Vector3(engine.getDeltaTime(), engine.getDeltaTime(), engine.getDeltaTime()))));
     };
 
     scene.registerBeforeRender(() => {
