@@ -1,206 +1,113 @@
-var cameraFOV = 1.5,
-mouseSensitivity = 1000,
-movementForce = 0.2,
-jumpForce = 0.1;
+const blinkRateMin = 100,
+blinkRateMax = 8000;
+
+var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 4;
+
+const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
+    mesh.material = blinkMat;
+    setTimeout(() => {
+        mesh.material = defaultMat;
+        if (callback)
+            callback();
+    }, 250);
+}
 
 const init = async () => {
-    const canvas = document.getElementById("canvas"),
+    var canvas = document.getElementById("canvas"),
     engine = new BABYLON.Engine(canvas, true);
 
     // setup scene
     var scene = new BABYLON.Scene(engine);
-
-    const isGameActive = () => {
-        return document.pointerLockElement === canvas;
-    }
+    scene.useRightHandedSystem = true;
+    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
     // setup camera
-    var camera = new BABYLON.FreeCamera("playerCamera", new BABYLON.Vector3(0, 50, -100), scene);
-    camera.fov = cameraFOV;
-    camera.minZ = 0.1;
+    var camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -45), scene);
+    camera.maxZ = 60;
 
-    // setup lights and shadows
-    var skyLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(-1, -1, 1), scene);
-    skyLight.intensity = 0.4;
+    // setup materials
+    var baseMat = new BABYLON.StandardMaterial("base", scene);
+    baseMat.diffuseTexture = new BABYLON.Texture("./assets/monitor_base.png", scene);
+    baseMat.emissiveColor = new BABYLON.Color3(1, 1, 1);
 
-    var dirLight = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(-1, -1, 1), scene);
-    dirLight.intensity = 0.8;
-    dirLight.position = new BABYLON.Vector3(0, 100, 0);
+    var screenMat = new BABYLON.StandardMaterial("screen", scene);
+    screenMat.diffuseTexture = new BABYLON.Texture("./assets/monitor_screen.png", scene);
+    screenMat.emissiveColor = new BABYLON.Color3(1, 1, 1);
 
-    var shadowGenerator = new BABYLON.ShadowGenerator(2048, dirLight);
-    shadowGenerator.setDarkness(0.5);
-    shadowGenerator.useBlurExponentialShadowMap = true;
-    shadowGenerator.blurKernel = 16;
-    shadowGenerator.useKernelBlur = true;
-    
-    // setup physics
-    scene.enablePhysics(new BABYLON.Vector3(0, -32, 0), new BABYLON.CannonJSPlugin());
-    scene.physicsEnabled = false; // init value
+    var screenBlinkMat = new BABYLON.StandardMaterial("screenBlink", scene);
+    screenBlinkMat.diffuseTexture = new BABYLON.Texture("./assets/monitor_screen_blink.png", scene);
+    screenBlinkMat.emissiveColor = new BABYLON.Color3(1, 1, 1);
 
-    // create skybox
-    var skybox = BABYLON.MeshBuilder.CreateBox("skybox", { size: 10000 }, scene);
-    skybox.material = new BABYLON.StandardMaterial("skyboxMaterial", scene);
-    skybox.material.backFaceCulling = false;
-    skybox.material.reflectionTexture = new BABYLON.CubeTexture("assets/skybox", scene);
-    skybox.material.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skybox.material.diffuseColor = new BABYLON.Color3();
-    skybox.material.specularColor = new BABYLON.Color3();
+    // load/setup mesh
+    BABYLON.SceneLoader.ImportMesh(null, "assets/", "monitor.obj", scene, meshes => {
+        var base = meshes[0],
+        screen = meshes[1];
 
-    // create ground collider
-    var ground = BABYLON.Mesh.CreateGroundFromHeightMap("ground", "assets/heightMap.png", 1000, 1000, 100, 0, 20, scene, false, () => {
-        ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.HeightmapImpostor, { mass: 0, friction: 0.1, restitution: 0 }, scene);
-        ground.material = new BABYLON.StandardMaterial("ground", scene);
-        ground.material.diffuseTexture = new BABYLON.Texture("assets/grass.jpg", scene);
-        ground.material.diffuseTexture.uScale = ground.material.diffuseTexture.vScale = 200;
-        ground.material.specularColor = ground.material.emissiveColor = new BABYLON.Color3(0, 0, 0);
-    });
-    ground.receiveShadows = true;
-    ground.position.y -= 20;
+        base.addChild(screen);
 
-    var platform = BABYLON.MeshBuilder.CreateBox("platform", { height: 5, width: 50, depth: 50});
-    platform.physicsImpostor = new BABYLON.PhysicsImpostor(platform, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.01, restitution: 0 }, scene);
-    platform.material = new BABYLON.StandardMaterial("platform", scene);
-    platform.material.diffuseTexture = new BABYLON.Texture("assets/concrete.jpg", scene);
-    platform.material.diffuseTexture.uScale = platform.material.diffuseTexture.vScale = 5;
-    platform.material.specularColor = platform.material.emissiveColor = new BABYLON.Color3(0, 0, 0);
-    shadowGenerator.addShadowCaster(platform);
-    platform.receiveShadows = true;
-    platform.position.y -= 9.5;
+        base.material = baseMat;
+        screen.material = screenMat;
 
-    // create player
-    var player = BABYLON.MeshBuilder.CreateCylinder("player", { height: 5, diameter: 2.5, tesselation: 48 });
-    player.physicsImpostor = new BABYLON.PhysicsImpostor(player, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 50, friction: 0, restitution: 0 }, scene);
-    player.isPickable = false;
-    player.position = new BABYLON.Vector3(0, 1, 0);
+        base.enableEdgesRendering(0.5);
+        base.edgesWidth = 30;
+        base.edgesColor = new BABYLON.Color4(0, 0, 0, 1);
 
-    skybox.parent = player;
-    skybox.position = player.position
-    camera.parent = player;
-    camera.position = new BABYLON.Vector3(0, 2, 0);
+        base.rotation.y = 180 * Math.PI / 180;
 
-    // test physics objects
-    for (let i = 0; i < 20; i++) {
-        var cube = BABYLON.MeshBuilder.CreateBox("cube", { size: 20 - i });
-        cube.physicsImpostor = new BABYLON.PhysicsImpostor(cube, BABYLON.PhysicsImpostor.BoxImpostor, { mass: (40 - i) * 4, friction: 0.85, restitution: 0 }, scene);
-        cube.material = new BABYLON.StandardMaterial("ground", scene);
-        cube.material.diffuseTexture = new BABYLON.Texture("assets/checker.jpg", scene);
-        cube.material.diffuseTexture.uScale = cube.material.diffuseTexture.vScale = 2;
-        let hue = Math.random();
-        new BABYLON.Color3.HSVtoRGBToRef(hue * 360, 1, 1, cube.material.diffuseColor);
-        new BABYLON.Color3.HSVtoRGBToRef(hue * 360, 1, 0.5, cube.material.emissiveColor);
-        shadowGenerator.addShadowCaster(cube);
-        cube.receiveShadows = true;
-        cube.position.z += 200;
-        cube.position.y += (10 + i * 20);
-    }
+        var oldTarget = new BABYLON.Vector3.Zero();
 
-    // handle key inputs
-    var keysActive = false,
-    forward = false,
-    left = false,
-    back = false,
-    right = false,
-    jump = false;
+        engine.runRenderLoop(() => {
+            var target = new BABYLON.Vector3.Lerp(
+                oldTarget,
+                new BABYLON.Vector3(
+                    -mouseX + (engine.getRenderWidth() / window.innerWidth) + engine.getRenderWidth() / 2,
+                    -mouseY + (engine.getRenderHeight() / window.innerHeight) + engine.getRenderHeight() / 2,
+                    -1500),
+                0.1
+            );
 
-    const keyCallback = (mode, key) => {
-        switch (key) {
-            case "w":
-                forward = mode;
-                break;
-            case "a":
-                left = mode;
-                break;
-            case "s":
-                back = mode;
-                break;
-            case "d":
-                right = mode;
-                break;
-            case " ":
-                jump = mode;
-                break;
-            case "r":
-                if (!mode) {
-                    player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3());
-                    player.position = new BABYLON.Vector3(0, 1, 0);
-                    camera.rotation = new BABYLON.Vector3();
-                }
-                break;
+            oldTarget = target;
+
+            base.lookAt(target); // make head follow pointer
+
+            scene.render();
+        });
+
+        // click on head
+        scene.onPointerObservable.add(pointerInfo => {
+            var pickedMesh = scene.pick(mouseX, mouseY).pickedMesh;
+
+            switch (pointerInfo.type) {
+                case BABYLON.PointerEventTypes.POINTERDOWN:
+                    if (screen.material != screenBlinkMat && (pickedMesh == base || pickedMesh == screen)) {
+                        screen.material = screenBlinkMat;
+                        screenBlink(screen, screenMat, screenBlinkMat);
+                    }
+                    break;
+                case BABYLON.PointerEventTypes.POINTERMOVE:
+                    canvas.style.cursor = (pickedMesh == base || pickedMesh == screen) ? "pointer" : "default";
+                    break;
+            }
+        });
+
+        // random blinking
+        var blinkLoop = () => {
+            setTimeout(() => {
+                screenBlink(screen, screenMat, screenBlinkMat, blinkLoop);
+            }, Math.floor(Math.random() * (blinkRateMax - blinkRateMin + 1) + blinkRateMin));
         }
-        keysActive = mode;
+
+        blinkLoop();
+	});
+
+    window.onresize = () => {
+        engine.resize();
     };
-
-    canvas.addEventListener("keydown", event => { keyCallback(true, event.key) }, false);
-    canvas.addEventListener("keyup", event => { keyCallback(false, event.key) }, false);
-
-    // handle pointer lock
-    const lockCallback = () => {
-        scene.physicsEnabled = isGameActive(); // basically pauses the game
-    }
-
-    document.addEventListener("pointerlockchange", lockCallback, false);
-    document.addEventListener("mozpointerlockchange", lockCallback, false);
-    document.addEventListener("webkitpointerlockchange", lockCallback, false);
-
-    // handle mouse movement
-    canvas.onmousemove = e => {
-        if (!isGameActive()) return;
-
-        let {
-            movementX,
-            movementY
-        } = e;
-
-        let rot = camera.rotation.add(new BABYLON.Vector3(movementY / mouseSensitivity, movementX / mouseSensitivity));
-        rot.x = Math.min(Math.max(rot.x, -85 * (Math.PI / 180)), 85 * (Math.PI / 180)); // clamp camera pitch
-        camera.rotation = rot;
-    };
-
-    canvas.onclick = () => {
-        canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-        canvas.requestPointerLock();
-    };
-
-    // handle player physics/movement
-    const applyPlayerVel = vel => {
-        player.physicsImpostor.setLinearVelocity(player.physicsImpostor.getLinearVelocity().add(vel.multiply(new BABYLON.Vector3(engine.getDeltaTime(), engine.getDeltaTime(), engine.getDeltaTime()))));
-    };
-
-    scene.registerBeforeRender(() => {
-        if (!scene.physicsEnabled) return;
-
-        /*let onGround,
-        ray = new BABYLON.Ray(player.position.add(new BABYLON.Vector3(0, 0, 0)), new BABYLON.Vector3(0, -1, 0), 2),
-        pick = scene.pickWithRay(ray);
-        if (pick) onGround = pick.hit;
-        console.log(onGround);*/
-
-        player.rotationQuaternion = new BABYLON.Quaternion.RotationAxis(new BABYLON.Vector3(), Math.PI / 3); // prevent rotation
-
-        /*if (onGround) */player.physicsImpostor.setLinearVelocity(new BABYLON.Vector3.Lerp(player.physicsImpostor.getLinearVelocity(), new BABYLON.Vector3(0, player.physicsImpostor.getLinearVelocity().y, 0), 0.1));
-
-        let dir = camera.getTarget().subtract(camera.position); // camera direction
-
-        // apply movement velocity
-        let movement = new BABYLON.Vector3();
-
-        if (forward) movement = movement.add(new BABYLON.Vector3(dir.x, 0, dir.z));
-        if (left) movement = movement.add(new BABYLON.Vector3(-dir.z, 0, dir.x));
-        if (back) movement = movement.add(new BABYLON.Vector3(-dir.x, 0, -dir.z));
-        if (right) movement = movement.add(new BABYLON.Vector3(dir.z, 0, -dir.x));
-
-        movement = movement.normalize();
-
-        applyPlayerVel(movement.multiply(new BABYLON.Vector3(movementForce, movementForce, movementForce)));
-
-        // apply jump velocity
-        if (jump) applyPlayerVel(new BABYLON.Vector3(0, jumpForce, 0));
-    });
-
-    // render scene
-    engine.runRenderLoop(() => {
-        scene.render();
-    });
 };
+
+window.onmousemove = event => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+}
 
 window.addEventListener("DOMContentLoaded", init);
