@@ -2,30 +2,60 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+
+  /*border: 1px solid red;*/
 }
 
 body {
   background-color: #161719;
-  display: flex;
-  justify-content: center;
 }
 
-header {
-  display: table-cell;
-  vertical-align: middle;
-  background-color: white;
-  width: 100%;
-  height: 25vh;
-  border-radius: 10px;
+small {
+  font-size: 3vh;
 }
-header > p {
+
+#header {
+  display: flex;
+  width: 100%;
+  min-height: 25vh;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#speech-bubble {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: calc(100% - 25vh - 25vh);
+  min-height: 15vh;
+  background-color: white;
+  border-radius: 10px;
+  margin: 3vh;
+}
+#speech-bubble::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 3vh solid transparent;
+	border-right-color: white;
+	border-left: 0;
+	margin-top: -3vh;
+	margin-left: -3vh;
+}
+#speech-bubble > p {
   text-align: center;
-  font-family: "Fredoka One", cursive;
+  font-family: 'Fredoka One', cursive;
   font-size: 5vh;
+  overflow-wrap: anywhere;
+  line-height: 5vh;
+  padding: 5px;
 }
 
 #canvas {
-  top: 0;
   left: 0;
   width: 25vh;
   height: 25vh;

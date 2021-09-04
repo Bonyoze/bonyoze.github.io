@@ -16,17 +16,22 @@
     <meta property="og:description" content="some cool stuff" />
     <meta name="theme-color" content="#FF0065">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- jquery -->
     <script src="https://cdn.babylonjs.com/babylon.js"></script> <!-- base -->
     <script src="https://cdn.babylonjs.com/cannon.js"></script> <!-- physics engine -->
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script> <!-- model loaders -->
   </head>
   <body>
-    <canvas id="canvas"></canvas>
-    <header>
-      <p>
-        Welcome To My Site (Under Construction)
-      </p>
-    </header>
+    <ul id="header">
+      <li>
+        <canvas id="canvas"></canvas>
+      </li>
+      <li id="speech-bubble">
+        <p>
+          <i>Heyo.</i> Welcome to my site.<br><small>Enjoy your stay :]</small>
+        </p>
+      </li>
+    </ul>
 
     <script src="main.js"></script>
   </body>

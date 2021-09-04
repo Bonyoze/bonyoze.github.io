@@ -1,7 +1,20 @@
 const blinkRateMin = 100,
-blinkRateMax = 8000;
+blinkRateMax = 15000;
 
-var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 4;
+const showText = (text, elem) => {
+    var chars = text.split("");
+
+    elem.text("");
+
+    for (var i = 0; i < chars.length; i++) {
+        setTimeout(() => {
+            elem.text(elem.text() + chars[0]);
+            chars.shift();
+        }, 100 * (i + 1));
+    }
+}
+
+//showText("hello", $("#speech-bubble > p"));
 
 const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
     mesh.material = blinkMat;
@@ -11,6 +24,8 @@ const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
             callback();
     }, 250);
 }
+
+var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 4;
 
 const init = async () => {
     var canvas = document.getElementById("canvas"),
@@ -62,31 +77,30 @@ const init = async () => {
                 new BABYLON.Vector3(
                     -mouseX + (engine.getRenderWidth() / window.innerWidth) + engine.getRenderWidth() / 2,
                     -mouseY + (engine.getRenderHeight() / window.innerHeight) + engine.getRenderHeight() / 2,
-                    -1500),
+                    -1200),
                 0.1
             );
 
             oldTarget = target;
-
+            
             base.lookAt(target); // make head follow pointer
+            
+            var pickedMesh = scene.pick(mouseX, mouseY).pickedMesh;
+            canvas.style.cursor = (pickedMesh == base || pickedMesh == screen) ? "pointer" : "default"; // cursor style fix
+
+            base.position.y = Math.sin(new Date().getTime() / 1200) * 1.5; // some movement
 
             scene.render();
         });
 
         // click on head
         scene.onPointerObservable.add(pointerInfo => {
-            var pickedMesh = scene.pick(mouseX, mouseY).pickedMesh;
-
-            switch (pointerInfo.type) {
-                case BABYLON.PointerEventTypes.POINTERDOWN:
-                    if (screen.material != screenBlinkMat && (pickedMesh == base || pickedMesh == screen)) {
-                        screen.material = screenBlinkMat;
-                        screenBlink(screen, screenMat, screenBlinkMat);
-                    }
-                    break;
-                case BABYLON.PointerEventTypes.POINTERMOVE:
-                    canvas.style.cursor = (pickedMesh == base || pickedMesh == screen) ? "pointer" : "default";
-                    break;
+            if (pointerInfo.type == BABYLON.PointerEventTypes.POINTERDOWN) {
+                var pickedMesh = pointerInfo.pickInfo.pickedMesh;
+                if (screen.material != screenBlinkMat && (pickedMesh == base || pickedMesh == screen)) {
+                    screen.material = screenBlinkMat;
+                    screenBlink(screen, screenMat, screenBlinkMat);
+                }
             }
         });
 
