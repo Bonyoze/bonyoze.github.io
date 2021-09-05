@@ -11,13 +11,13 @@ body {
 }
 
 small {
-  font-size: 3vh;
+  font-size: 2vh;
 }
 
 #header {
   display: flex;
   width: 100%;
-  min-height: 25vh;
+  min-height: 20vh;
   justify-content: flex-start;
   align-items: center;
 }
@@ -27,8 +27,7 @@ small {
   justify-content: center;
   align-items: center;
   position: relative;
-  width: calc(100% - 25vh - 25vh);
-  min-height: 15vh;
+  min-height: 8vh;
   background-color: white;
   border-radius: 10px;
   margin: 3vh;
@@ -40,25 +39,27 @@ small {
 	top: 50%;
 	width: 0;
 	height: 0;
-	border: 3vh solid transparent;
+	border: 2vh solid transparent;
 	border-right-color: white;
 	border-left: 0;
-	margin-top: -3vh;
-	margin-left: -3vh;
+	margin-top: -2vh;
+	margin-left: -2vh;
 }
 #speech-bubble > p {
   text-align: center;
   font-family: 'Fredoka One', cursive;
-  font-size: 5vh;
+  font-size: 3vh;
   overflow-wrap: anywhere;
-  line-height: 5vh;
-  padding: 5px;
+  line-height: 3vh;
+  padding: 3px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 #canvas {
   left: 0;
-  width: 25vh;
-  height: 25vh;
+  width: 20vh;
+  height: 20vh;
   touch-action: none;
   outline: none;
 }

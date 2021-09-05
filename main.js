@@ -1,20 +1,97 @@
 const blinkRateMin = 100,
 blinkRateMax = 15000;
 
-const showText = (text, elem) => {
-    var chars = text.split("");
+const sayText = (textData, elem) => {
+    elem.html("");
 
-    elem.text("");
+    var oldHTML = "",
+    oldText = "";
 
-    for (var i = 0; i < chars.length; i++) {
-        setTimeout(() => {
-            elem.text(elem.text() + chars[0]);
-            chars.shift();
-        }, 100 * (i + 1));
+    var applyStyles = (data, text) => {
+        if (data.italic) text = "<i>" + text + "</i>";
+        if (data.small) text = "<small>" + text + "</small>";
+        if (data.newline) text = "<br>" + text;
+
+        return text;
     }
+
+    var runData = () => {
+        var data = textData[0];
+        chars = data.text.split("");
+
+        textData.shift();
+
+        if (data.wait) {
+            setTimeout(() => {
+                applyStyles(data, true);
+                runChars(data, chars);
+            }, data.wait);
+        } else {
+            applyStyles(data, true);
+            runChars(data, chars);
+        }
+    }
+
+    var runChars = (data, chars) => {
+
+        var typeChar = () => {
+            oldText += chars[0];
+            elem.html(oldHTML + applyStyles(data, oldText));
+            chars.shift();
+
+            if (chars.length > 0) {
+                runChars(data, chars);
+            } else if (textData.length > 0) {
+                oldHTML = elem.html();
+                oldText = "";
+                runData();
+            }
+        }
+
+        if (data.delay == null || data.delay >= 0) {
+            setTimeout(typeChar, data.delay || 75);
+        } else {
+            typeChar();
+        }
+    }
+
+    runData();
 }
 
-//showText("hello", $("#speech-bubble > p"));
+/*
+    sayText Notes:
+
+    wait - time before text section starts to be typed out (default is to start instantly)
+    delay - time between character typing (default is 75 ms) (set to -1 to display instantly)
+*/
+
+sayText(
+    [
+        {
+            text: "Heyo. ",
+            italic: true,
+            delay: 25
+        },
+        {
+            text: "I'm Bonyoze.",
+            wait: 1000
+        },
+        {
+            text: "Enjoy my site! ",
+            small: true,
+            newline: true,
+            delay: 40,
+            wait: 1000
+        },
+        {
+            text: ":] ",
+            small: true,
+            delay: -1,
+            wait: 1500
+        }
+    ],
+    $("#speech-bubble > p")
+);
 
 const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
     mesh.material = blinkMat;
