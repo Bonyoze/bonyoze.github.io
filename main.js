@@ -1,10 +1,14 @@
 const blinkRateMin = 100,
-blinkRateMax = 15000;
+blinkRateMax = 15000,
+speakElem = $("#speech-bubble > p");
 
-const sayText = (textData, elem) => {
-    elem.html("");
+var speakTimer;
+const sayText = textData => {
+    clearTimeout(speakTimer);
+    speakElem.html("");
 
-    var oldHTML = "",
+    var textIndex = 0,
+    oldHTML = "",
     oldText = "";
 
     var applyStyles = (data, text) => {
@@ -16,13 +20,13 @@ const sayText = (textData, elem) => {
     }
 
     var runData = () => {
-        var data = textData[0];
+        var data = textData[textIndex];
         chars = data.text.split("");
 
-        textData.shift();
+        textIndex++;
 
         if (data.wait) {
-            setTimeout(() => {
+            speakTimer = setTimeout(() => {
                 applyStyles(data, true);
                 runChars(data, chars);
             }, data.wait);
@@ -36,20 +40,20 @@ const sayText = (textData, elem) => {
 
         var typeChar = () => {
             oldText += chars[0];
-            elem.html(oldHTML + applyStyles(data, oldText));
+            speakElem.html(oldHTML + applyStyles(data, oldText));
             chars.shift();
 
             if (chars.length > 0) {
                 runChars(data, chars);
-            } else if (textData.length > 0) {
-                oldHTML = elem.html();
+            } else if (textIndex < textData.length) {
+                oldHTML = speakElem.html();
                 oldText = "";
                 runData();
             }
         }
 
         if (data.delay == null || data.delay >= 0) {
-            setTimeout(typeChar, data.delay || 75);
+            speakTimer = setTimeout(typeChar, data.delay || 50);
         } else {
             typeChar();
         }
@@ -58,14 +62,7 @@ const sayText = (textData, elem) => {
     runData();
 }
 
-/*
-    sayText Notes:
-
-    wait - time before text section starts to be typed out (default is to start instantly)
-    delay - time between character typing (default is 75 ms) (set to -1 to display instantly)
-*/
-
-sayText(
+const dialogue = [
     [
         {
             text: "Heyo. ",
@@ -80,7 +77,6 @@ sayText(
             text: "Enjoy my site! ",
             small: true,
             newline: true,
-            delay: 40,
             wait: 1000
         },
         {
@@ -90,8 +86,53 @@ sayText(
             wait: 1500
         }
     ],
-    $("#speech-bubble > p")
-);
+    [
+        {
+            text: "I enjoy programming, ",
+        },
+        {
+            text: "graphic design/art ",
+            wait: 750
+        },
+        {
+            text: " and other cool stuff!",
+            wait: 750
+        }
+    ],
+    [
+        {
+            text: "Check out my socials! "
+        }
+    ],
+    [
+        {
+            text: "I have my own Discord server!"
+        },
+        {
+            text: "Check it out ",
+            small: true,
+            newline: true,
+            wait: 750
+        },
+        {
+            text: "(if you're cool)",
+            small: true,
+            wait: 500
+        }
+    ],
+    [
+        {
+            text: "That's all I have to say about me."
+        },
+        {
+            text: "Hope you enjoyed my site :]",
+            newline: true,
+            wait: 500
+        }
+    ]
+];
+
+sayText(dialogue[0]);
 
 const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
     mesh.material = blinkMat;
@@ -141,7 +182,7 @@ const init = async () => {
         screen.material = screenMat;
 
         base.enableEdgesRendering(0.5);
-        base.edgesWidth = 30;
+        base.edgesWidth = 15;
         base.edgesColor = new BABYLON.Color4(0, 0, 0, 1);
 
         base.rotation.y = 180 * Math.PI / 180;
@@ -149,26 +190,35 @@ const init = async () => {
         var oldTarget = new BABYLON.Vector3.Zero();
 
         engine.runRenderLoop(() => {
-            var target = new BABYLON.Vector3.Lerp(
+            var rect = canvas.getBoundingClientRect(),
+            target = new BABYLON.Vector3.Lerp(
                 oldTarget,
                 new BABYLON.Vector3(
-                    -mouseX + (engine.getRenderWidth() / window.innerWidth) + engine.getRenderWidth() / 2,
-                    -mouseY + (engine.getRenderHeight() / window.innerHeight) + engine.getRenderHeight() / 2,
-                    -1200),
+                    -mouseX + (engine.getRenderWidth() / window.innerWidth) + engine.getRenderWidth() / 2 + rect.left,
+                    -mouseY + (engine.getRenderHeight() / window.innerHeight) + engine.getRenderHeight() / 2 + rect.top,
+                    -1000),
                 0.1
             );
-
             oldTarget = target;
-            
             base.lookAt(target); // make head follow pointer
-            
-            var pickedMesh = scene.pick(mouseX, mouseY).pickedMesh;
-            canvas.style.cursor = (pickedMesh == base || pickedMesh == screen) ? "pointer" : "default"; // cursor style fix
 
-            base.position.y = Math.sin(new Date().getTime() / 1200) * 1.5; // some movement
+            var speechPos = BABYLON.Vector3.Project(
+                screen.getBoundingInfo().boundingSphere.centerWorld,
+                BABYLON.Matrix.Identity(),
+                scene.getTransformMatrix(),
+                camera.viewport.toGlobal(
+                engine.getRenderWidth(),
+                engine.getRenderHeight(),
+            ));
+
+            $("#speech-bubble") // position speech bubble
+                .css("left", speechPos.x + window.innerWidth / 2 - engine.getRenderWidth() / 2)
+                .css("bottom", window.innerHeight - speechPos.y + window.innerHeight * 0.075);
 
             scene.render();
         });
+
+        var dialogueIndex = 0;
 
         // click on head
         scene.onPointerObservable.add(pointerInfo => {
@@ -177,6 +227,11 @@ const init = async () => {
                 if (screen.material != screenBlinkMat && (pickedMesh == base || pickedMesh == screen)) {
                     screen.material = screenBlinkMat;
                     screenBlink(screen, screenMat, screenBlinkMat);
+                    
+                    if (dialogueIndex < dialogue.length - 1) { // say dialogue
+                        dialogueIndex++;
+                        sayText(dialogue[dialogueIndex]);
+                    }
                 }
             }
         });

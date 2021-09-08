@@ -2,48 +2,38 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-
-  /*border: 1px solid red;*/
+  user-select: none;
 }
 
 body {
-  background-color: #161719;
-}
-
-small {
-  font-size: 2vh;
-}
-
-#header {
-  display: flex;
-  width: 100%;
-  min-height: 20vh;
-  justify-content: flex-start;
-  align-items: center;
+  background-color: black;
 }
 
 #speech-bubble {
-  display: flex;
+  display: inline-block;
   justify-content: center;
   align-items: center;
-  position: relative;
-  min-height: 8vh;
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 30vh);
+  transform: translateX(-50%);
+  min-width: 8vh;
+  min-height: 4vh;
   background-color: white;
   border-radius: 10px;
-  margin: 3vh;
 }
 #speech-bubble::after {
 	content: '';
 	position: absolute;
-	left: 0;
-	top: 50%;
+	bottom: 0;
+	left: 50%;
 	width: 0;
 	height: 0;
 	border: 2vh solid transparent;
-	border-right-color: white;
-	border-left: 0;
-	margin-top: -2vh;
+	border-top-color: white;
+	border-bottom: 0;
 	margin-left: -2vh;
+	margin-bottom: -2vh;
 }
 #speech-bubble > p {
   text-align: center;
@@ -51,15 +41,32 @@ small {
   font-size: 3vh;
   overflow-wrap: anywhere;
   line-height: 3vh;
-  padding: 3px;
+  padding-top: 4px;
+  padding-bottom: 8px;
   padding-left: 15px;
   padding-right: 15px;
 }
+#speech-bubble > p > small {
+  font-size: 2vh;
+}
 
 #canvas {
-  left: 0;
-  width: 20vh;
-  height: 20vh;
+  position: absolute;
+  left: calc(50% - 25vh);
+  top: calc(50% - 35vh);
+  width: 50vh;
+  height: 50vh;
   touch-action: none;
   outline: none;
+}
+
+#footer {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+}
+#footer > a > img {
+  filter: invert(1);
 }
