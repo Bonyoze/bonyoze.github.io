@@ -213,8 +213,8 @@ const init = async () => {
 
             $("#speech-bubble") // position speech bubble
                 .css("left", speechPos.x + window.innerWidth / 2 - engine.getRenderWidth() / 2)
-                .css("bottom", window.innerHeight - speechPos.y + window.innerHeight * 0.075);
-
+                .css("bottom", window.innerHeight - speechPos.y - window.innerHeight * 0.025);
+            
             scene.render();
         });
 
