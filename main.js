@@ -74,7 +74,7 @@ const dialogue = [
             wait: 1000
         },
         {
-            text: "Enjoy my site! ",
+            text: "Click on me for more info! ",
             small: true,
             newline: true,
             wait: 1000
