@@ -143,7 +143,7 @@ const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
     }, 250);
 }
 
-var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 4;
+var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
 
 const init = async () => {
     var canvas = document.getElementById("canvas"),
