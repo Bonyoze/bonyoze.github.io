@@ -74,24 +74,18 @@ const dialogue = [
             wait: 1000
         },
         {
-            text: "Click on me for more info! ",
+            text: "Click on me for more info!",
             small: true,
             newline: true,
             wait: 1000
-        },
-        {
-            text: ":] ",
-            small: true,
-            delay: -1,
-            wait: 1500
         }
     ],
     [
         {
-            text: "I enjoy programming, ",
+            text: "I enjoy programming,",
         },
         {
-            text: "graphic design/art ",
+            text: " graphic design/art",
             wait: 750
         },
         {
@@ -101,7 +95,7 @@ const dialogue = [
     ],
     [
         {
-            text: "Check out my socials! "
+            text: "Check out my socials!"
         }
     ],
     [
@@ -109,13 +103,13 @@ const dialogue = [
             text: "I have my own Discord server!"
         },
         {
-            text: "Check it out ",
+            text: "Check it out",
             small: true,
             newline: true,
             wait: 750
         },
         {
-            text: "(if you're cool)",
+            text: " (if you're cool enough)",
             small: true,
             wait: 500
         }
@@ -125,9 +119,14 @@ const dialogue = [
             text: "That's all I have to say about me."
         },
         {
-            text: "Hope you enjoyed my site :]",
+            text: "Hope you enjoyed my site",
             newline: true,
             wait: 500
+        },
+        {
+            text: " :]",
+            delay: -1,
+            wait: 1000
         }
     ]
 ];

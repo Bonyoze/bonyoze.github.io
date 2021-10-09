@@ -66,6 +66,3 @@ body {
   transform: translateX(-50%);
   bottom: 0;
 }
-#footer > a > img {
-  filter: invert(1);
-}
