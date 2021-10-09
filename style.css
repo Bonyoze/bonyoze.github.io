@@ -17,23 +17,23 @@ body {
   left: 50%;
   bottom: calc(50% + 30vh);
   transform: translateX(-50%);
-  min-width: 8vh;
+  min-width: 50vw;
   min-height: 4vh;
   background-color: white;
   border-radius: 10px;
 }
 #speech-bubble::after {
-	content: '';
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	width: 0;
-	height: 0;
-	border: 2vh solid transparent;
-	border-top-color: white;
-	border-bottom: 0;
-	margin-left: -2vh;
-	margin-bottom: -2vh;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 2vh solid transparent;
+  border-top-color: white;
+  border-bottom: 0;
+  margin-left: -2vh;
+  margin-bottom: -2vh;
 }
 #speech-bubble > p {
   text-align: center;
