@@ -17,7 +17,7 @@ body {
   left: 50%;
   bottom: calc(50% + 30vh);
   transform: translateX(-50%);
-  min-width: 50vw;
+  min-width: 8vh;
   min-height: 4vh;
   background-color: white;
   border-radius: 10px;
@@ -39,7 +39,7 @@ body {
   text-align: center;
   font-family: 'Fredoka One', cursive;
   font-size: 3vh;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
   line-height: 3vh;
   padding-top: 4px;
   padding-bottom: 8px;
