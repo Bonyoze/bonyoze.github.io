@@ -96,6 +96,12 @@ const dialogue = [
     [
         {
             text: "Check out my socials!"
+        },
+	{
+            text: "You can find them down below",
+	    small: true,
+            newline: true,
+            wait: 750
         }
     ],
     [
@@ -103,15 +109,10 @@ const dialogue = [
             text: "I have my own Discord server!"
         },
         {
-            text: "Check it out",
+            text: "Anybody's free to join",
             small: true,
             newline: true,
             wait: 750
-        },
-        {
-            text: " (if you're cool enough)",
-            small: true,
-            wait: 500
         }
     ],
     [
