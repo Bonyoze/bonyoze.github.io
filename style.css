@@ -7,6 +7,7 @@
 
 body {
   background-color: black;
+  overflow-x: hidden;
 }
 
 #speech-bubble {
@@ -19,7 +20,7 @@ body {
   transform: translateX(-50%);
   min-width: 8vh;
   background-color: white;
-  border-radius: 10px;
+  border-radius: 1vh;
 }
 #speech-bubble::after {
   content: '';
@@ -28,11 +29,11 @@ body {
   left: 50%;
   width: 0;
   height: 0;
-  border: 2vh solid transparent;
+  border: 2vw solid transparent;
   border-top-color: white;
   border-bottom: 0;
-  margin-left: -2vh;
-  margin-bottom: -1.8vh;
+  margin-left: -2vw;
+  margin-bottom: -1.8vw;
 }
 #speech-bubble > p {
   text-align: center;
@@ -46,15 +47,15 @@ body {
   padding-right: 2vw;
 }
 #speech-bubble > p > small {
-  font-size: 1.75vw;
+  font-size: 1.5vw;
 }
 
 #canvas {
   position: absolute;
-  left: calc(50% - 25vh);
-  top: calc(50% - 25vh);
-  width: 50vh;
-  height: 50vh;
+  left: calc(50% - 14vw);
+  top: calc(50% - 14vw);
+  width: 28vw;
+  height: 28vw;
   touch-action: none;
   outline: none;
 }

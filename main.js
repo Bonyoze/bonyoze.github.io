@@ -1,11 +1,11 @@
 const blinkRateMin = 100,
 blinkRateMax = 15000,
-speakElem = $("#speech-bubble > p");
+textElem = $("#speech-bubble > p");
 
 var speakTimer;
 const sayText = textData => {
     clearTimeout(speakTimer);
-    speakElem.html("");
+    textElem.html("");
 
     var textIndex = 0,
     oldHTML = "",
@@ -40,13 +40,13 @@ const sayText = textData => {
 
         var typeChar = () => {
             oldText += chars[0];
-            speakElem.html(oldHTML + applyStyles(data, oldText));
+            textElem.html(oldHTML + applyStyles(data, oldText));
             chars.shift();
 
             if (chars.length > 0) {
                 runChars(data, chars);
             } else if (textIndex < textData.length) {
-                oldHTML = speakElem.html();
+                oldHTML = textElem.html();
                 oldText = "";
                 runData();
             }
@@ -97,19 +97,19 @@ const dialogue = [
         {
             text: "Check out my socials!"
         },
-	{
-            text: "You can find them down below",
-	    small: true,
+	    {
+            text: "You can find them down below.",
+	        small: true,
             newline: true,
             wait: 750
         }
     ],
     [
         {
-            text: "I have my own Discord server!"
+            text: "I have my own Discord server."
         },
         {
-            text: "Anybody's free to join",
+            text: "Anybody's free to join!",
             small: true,
             newline: true,
             wait: 750
@@ -120,12 +120,14 @@ const dialogue = [
             text: "That's all I have to say about me."
         },
         {
-            text: "Hope you enjoyed my site",
+            text: "Hope you enjoyed my site!",
+            small: true,
             newline: true,
             wait: 500
         },
         {
-            text: " :]",
+            text: " :)",
+            small: true,
             delay: -1,
             wait: 1000
         }
@@ -146,7 +148,7 @@ const screenBlink = (mesh, defaultMat, blinkMat, callback) => {
 var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
 
 const init = async () => {
-    var canvas = document.getElementById("canvas"),
+    var canvas = $("#canvas")[0],
     engine = new BABYLON.Engine(canvas, true);
 
     // setup scene
@@ -213,7 +215,7 @@ const init = async () => {
 
             $("#speech-bubble") // position speech bubble
                 .css("left", speechPos.x + window.innerWidth / 2 - engine.getRenderWidth() / 2)
-                .css("bottom", window.innerHeight - speechPos.y - window.innerHeight * 0.025);
+                .css("bottom", window.innerHeight / 2 - speechPos.y + canvas.clientHeight);
             
             scene.render();
         });
@@ -244,7 +246,7 @@ const init = async () => {
         }
 
         blinkLoop();
-	});
+    });
 
     window.onresize = () => {
         engine.resize();
