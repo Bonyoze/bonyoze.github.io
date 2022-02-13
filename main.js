@@ -82,15 +82,15 @@ const dialogue = [
     ],
     [
         {
-            text: "I enjoy programming,",
+            text: "I do programming and sometimes art stuff.",
         },
         {
-            text: " graphic design/art",
+            text: " I'm not an artist",
             wait: 750
         },
         {
-            text: " and other cool stuff!",
-            wait: 750
+            text: ", drawing is just a neat hobby.",
+            wait: 500
         }
     ],
     [
@@ -106,21 +106,10 @@ const dialogue = [
     ],
     [
         {
-            text: "I have my own Discord server."
-        },
-        {
-            text: "Anybody's free to join!",
-            small: true,
-            newline: true,
-            wait: 750
-        }
-    ],
-    [
-        {
             text: "That's all I have to say about me."
         },
         {
-            text: "Hope you enjoyed my site!",
+            text: "Hope you enjoy my site!",
             small: true,
             newline: true,
             wait: 500
