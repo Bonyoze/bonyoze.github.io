@@ -82,15 +82,7 @@ const dialogue = [
     ],
     [
         {
-            text: "I do programming and sometimes art stuff.",
-        },
-        {
-            text: " I'm not an artist",
-            wait: 750
-        },
-        {
-            text: ", drawing is just a neat hobby.",
-            wait: 500
+            text: "I do cool coding and programming stuff.",
         }
     ],
     [
@@ -98,7 +90,7 @@ const dialogue = [
             text: "Check out my socials!"
         },
 	    {
-            text: "You can find them down below.",
+            text: "(You can find them down below)",
 	        small: true,
             newline: true,
             wait: 750
