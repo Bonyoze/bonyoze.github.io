@@ -82,14 +82,31 @@ const dialogue = [
     ],
     [
         {
-            text: "I do cool coding and programming stuff.",
+            text: "I do cool programming stuff!",
+        },
+	{
+            text: "I use a lot of HTML, JS, CSS, Lua, and C++",
+            small: true,
+            newline: true,
+            wait: 1000
         }
     ],
     [
         {
-            text: "Check out my socials!"
+            text: "I also like modding games!",
         },
-	    {
+	{
+            text: "Mostly Source games such as Garry's Mod, but also Minecraft Java",
+            small: true,
+            newline: true,
+            wait: 1000
+        }
+    ],
+    [
+        {
+            text: "If you want to have a chat, check out my socials!"
+        },
+	{
             text: "(You can find them down below)",
 	        small: true,
             newline: true,
@@ -98,10 +115,10 @@ const dialogue = [
     ],
     [
         {
-            text: "That's all I have to say about me."
+            text: "That's all I've got to say about me."
         },
         {
-            text: "Hope you enjoy my site!",
+            text: "Hope you enjoyed my site!",
             small: true,
             newline: true,
             wait: 500
@@ -112,6 +129,13 @@ const dialogue = [
             delay: -1,
             wait: 1000
         }
+    ],
+    [
+	{
+            text: ":)",
+	    small: true,
+	    delay: -1
+	}
     ]
 ];
 
