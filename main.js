@@ -85,7 +85,7 @@ const dialogue = [
             text: "I do cool programming stuff!",
         },
 	{
-            text: "I use a lot of Node.js, Java, Lua, and C++",
+            text: "I use a lot of JS, Lua, Java, and C/C++",
             small: true,
             newline: true,
             wait: 1000
