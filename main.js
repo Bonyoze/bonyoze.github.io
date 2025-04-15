@@ -107,7 +107,7 @@ const dialogue = [
             text: "If you want to have a chat, check out my socials!"
         },
 	{
-            text: "(You can find them down below)",
+            text: "They're around here somewhere...",
 	        small: true,
             newline: true,
             wait: 750
